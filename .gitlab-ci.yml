@@ -1,0 +1,80 @@
+image: registry.gitlab.com/aaronrenner/docker-asdf
+
+variables:
+  LANG: C.UTF-8
+  MIX_HOME: "$CI_PROJECT_DIR/.mix"
+  ASDF_DATA_DIR: "$CI_PROJECT_DIR/.asdf"
+
+stages:
+  - install
+  - build
+  - test
+
+before_script:
+  - . ~/.asdf/asdf.sh
+
+install_asdf_env_and_deps:
+  stage: install
+  cache:
+    key: install
+    paths:
+      - $ASDF_DATA_DIR
+      - $MIX_HOME
+      - deps
+  script:
+    - asdf plugin-add erlang || true
+    - asdf plugin-add elixir || true
+    # Have to run twice due to: https://github.com/asdf-vm/asdf-erlang/issues/57
+    - asdf install && asdf install
+    - mix local.hex --force
+    - mix local.rebar --force
+    - (cd freezer_eye && mix do deps.clean --unused, deps.get)
+  artifacts:
+    paths:
+      - $ASDF_DATA_DIR
+      - $MIX_HOME
+      - freezer_eye/deps
+
+build:dev:
+  stage: build
+  cache:
+    key: $CI_JOB_NAME
+    paths:
+      - freezer_eye/_build
+  script:
+    - (cd freezer_eye && mix compile --warnings-as-errors)
+  dependencies:
+    - install_asdf_env_and_deps
+  artifacts:
+    paths:
+      - _build
+
+build:test:
+  stage: build
+  cache:
+    key: $CI_JOB_NAME
+    paths:
+      - _build
+  script:
+    - (cd freezer_eye && MIX_ENV=test mix compile --warnings-as-errors)
+  dependencies:
+    - install_asdf_env_and_deps
+  artifacts:
+    paths:
+      - _build
+
+unit_tests:
+  stage: test
+  script: (cd freezer_eye && mix test)
+  dependencies:
+    - install_asdf_env_and_deps
+    - build:test
+
+linters:
+  stage: test
+  script:
+    - (cd freezer_eye && mix format --check-formatted)
+    - (cd freezer_eye && mix deps.unlock --unused && git diff --exit-code)
+  dependencies:
+    - install_asdf_env_and_deps
+    - build:dev
