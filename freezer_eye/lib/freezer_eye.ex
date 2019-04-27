@@ -7,6 +7,5 @@ defmodule FreezerEye do
   Manually send a heartbeat message to the reporting service
   """
   def send_heartbeat do
-
   end
 end
