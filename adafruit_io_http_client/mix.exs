@@ -8,7 +8,8 @@ defmodule AdafruitIOHTTPClient.MixProject do
       elixir: "~> 1.8",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      dialyzer: dialyzer()
     ]
   end
 
@@ -26,10 +27,18 @@ defmodule AdafruitIOHTTPClient.MixProject do
       {:hackney, "~> 1.6"},
       {:jason, "~> 1.0"},
       {:bypass, "~> 1.0", only: :test},
+      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false},
       {:stream_data, "~> 0.4", only: :test}
     ]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp dialyzer do
+    [
+      ignore_warnings: ".dialyzer_ignore.exs",
+      list_unused_filters: true
+    ]
+  end
 end
