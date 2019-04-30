@@ -30,6 +30,7 @@ install_asdf_env_and_deps:
     - mix local.rebar --force
     - (cd freezer_eye && mix do deps.clean --unused, deps.get)
   artifacts:
+    expire_in: 2 hrs
     paths:
       - $ASDF_DATA_DIR
       - $MIX_HOME
@@ -46,6 +47,7 @@ build:dev:
   dependencies:
     - install_asdf_env_and_deps
   artifacts:
+    expire_in: 2 hrs
     paths:
       - freezer_eye/_build
 
@@ -60,6 +62,7 @@ build:test:
   dependencies:
     - install_asdf_env_and_deps
   artifacts:
+    expire_in: 2 hrs
     paths:
       - freezer_eye/_build
 
