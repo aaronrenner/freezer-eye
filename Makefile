@@ -1,4 +1,4 @@
-APPS=adafruit_io_http_client freezer_eye
+APPS=adafruit_io_http_client fe_reporting freezer_eye
 # Can run make Q= to get the max build output
 Q := @
 
@@ -28,11 +28,12 @@ endef
 
 
 $(eval $(call APP_TEMPLATE,adafruit_io_http_client))
+$(eval $(call APP_TEMPLATE,fe_reporting))
 $(eval $(call APP_TEMPLATE,freezer_eye))
 
-install_deps: install_deps_adafruit_io_http_client install_deps_freezer_eye
-compile: compile_adafruit_io_http_client compile_freezer_eye
-test: test_adafruit_io_http_client test_freezer_eye
-dialyzer: dialyzer_adafruit_io_http_client dialyzer_freezer_eye
-check_format: check_format_adafruit_io_http_client check_format_freezer_eye
-check_unused_deps: check_unused_deps_adafruit_io_http_client check_unused_deps_freezer_eye
+install_deps: install_deps_adafruit_io_http_client install_deps_freezer_eye install_deps_fe_reporting
+compile: compile_adafruit_io_http_client compile_freezer_eye compile_fe_reporting
+test: test_adafruit_io_http_client test_freezer_eye test_fe_reporting
+dialyzer: dialyzer_adafruit_io_http_client dialyzer_freezer_eye dialyzer_fe_reporting
+check_format: check_format_adafruit_io_http_client check_format_freezer_eye check_format_fe_reporting
+check_unused_deps: check_unused_deps_adafruit_io_http_client check_unused_deps_freezer_eye check_unused_deps_fe_reporting

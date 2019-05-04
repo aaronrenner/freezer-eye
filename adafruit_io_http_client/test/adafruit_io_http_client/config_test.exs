@@ -3,6 +3,31 @@ defmodule AdafruitIOHTTPClient.ConfigTest do
 
   alias AdafruitIOHTTPClient.Config
 
+  @default_base_url "https://io.adafruit.com"
+
+  test "new/1 sets default fields" do
+    username = "foo"
+    secret_key = "bar"
+
+    assert %Config{
+             username: username,
+             secret_key: secret_key,
+             base_url: @default_base_url
+           } == Config.new(username, secret_key)
+  end
+
+  test "new/1 allows overriding the base_url" do
+    username = "foo"
+    secret_key = "bar"
+    base_url = "http://www.example.com"
+
+    assert %Config{
+             username: username,
+             secret_key: secret_key,
+             base_url: base_url
+           } == Config.new(username, secret_key, base_url: base_url)
+  end
+
   test "load_from_env!/0 with all required settings" do
     ensure_setting_is_reset(:adafruit_io_http_client, :base_url)
     ensure_setting_is_reset(:adafruit_io_http_client, :username)
