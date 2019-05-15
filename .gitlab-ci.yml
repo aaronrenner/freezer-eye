@@ -121,6 +121,24 @@ dialyzer:fe_reporting:
     - install_asdf_env_and_deps
     - build:dev
 
+dialyzer:fe_test_helpers:
+  stage: test
+  variables:
+    DIALYZER_FE_TEST_HELPERS_CACHE_VERSION: 1
+  # --format short can't be used here due to: https://github.com/jeremyjh/dialyxir/issues/314
+  # --list-unused-filters must be used as a command line option instead of in
+  #      mix.exs due to: https://github.com/jeremyjh/dialyxir/issues/313
+  script: make dialyzer_fe_test_helpers
+  cache:
+    key: $CI_JOB_NAME-$DIALYZER_FE_TEST_HELPERS_CACHE_VERSION
+    paths:
+      - "*/_build/dev/*.plt"
+      - "*/_build/dev/*.plt.hash"
+      - $MIX_HOME/*.plt
+  dependencies:
+    - install_asdf_env_and_deps
+    - build:dev
+
 dialyzer:freezer_eye:
   stage: test
   variables:
