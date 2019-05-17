@@ -19,6 +19,11 @@ defmodule FETestHelpers.HeartbeatTracker.Impl do
     Enum.reverse(reversed_heartbeats)
   end
 
+  @spec count(t) :: non_neg_integer
+  def count(reversed_heartbeats) when is_impl(reversed_heartbeats) do
+    length(reversed_heartbeats)
+  end
+
   @spec list_heartbeat_intervals(t, System.time_unit()) :: [integer]
   def list_heartbeat_intervals(reversed_heartbeats, time_unit \\ :second) do
     reversed_heartbeats

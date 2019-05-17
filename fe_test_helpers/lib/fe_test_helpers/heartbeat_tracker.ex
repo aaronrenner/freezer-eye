@@ -20,6 +20,13 @@ defmodule FETestHelpers.HeartbeatTracker do
     end)
   end
 
+  @spec count(tracker) :: pos_integer
+  def count(pid) do
+    pid
+    |> Agent.get(& &1)
+    |> Impl.count()
+  end
+
   @spec list_heartbeat_timestamps(tracker) :: [DateTime.t()]
   def list_heartbeat_timestamps(pid) do
     pid

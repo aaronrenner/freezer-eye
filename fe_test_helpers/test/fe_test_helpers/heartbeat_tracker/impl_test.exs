@@ -13,6 +13,14 @@ defmodule FETestHelpers.HeartbeatTracker.ImplTest do
     assert DateTime.diff(recorded_timestamp, DateTime.utc_now(), :millisecond) < 20
   end
 
+  property "count/1 returns the number of recorded heartbeats" do
+    forall heartbeat_count <- non_neg_integer() do
+      impl = Impl.new() |> record_heartbeat_multiple_times(heartbeat_count)
+
+      heartbeat_count == Impl.count(impl)
+    end
+  end
+
   property "list_heartbeat_timestamps/1 returns the timestamps in the order received" do
     current_timestamp = DateTime.utc_now()
 

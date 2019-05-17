@@ -4,18 +4,28 @@ defmodule FETestHelpers.HeartbeatTrackerTest do
 
   alias FETestHelpers.HeartbeatTracker
 
-  property "record_heartbeat/1 stores the heartbeat" do
+  property "record_heartbeat/1 stores the current timestamp in order each time it's called" do
+    forall [heartbeat_count <- pos_integer()] do
+      {:ok, tracker} = HeartbeatTracker.start_link([])
+
+      record_heartbeat_multiple_times(tracker, heartbeat_count)
+
+      timestamps = HeartbeatTracker.list_heartbeat_timestamps(tracker)
+
+      timestamps_sorted? =
+        Enum.sort_by(timestamps, &DateTime.to_unix(&1, :nanosecond)) == timestamps
+
+      timestamps_sorted?
+    end
+  end
+
+  property "count/1 returns the number of heartbeats recorded" do
     forall [heartbeat_count <- non_neg_integer()] do
       {:ok, tracker} = HeartbeatTracker.start_link([])
 
       record_heartbeat_multiple_times(tracker, heartbeat_count)
 
-      actual_heartbeat_count =
-        tracker
-        |> HeartbeatTracker.list_heartbeat_timestamps()
-        |> length()
-
-      actual_heartbeat_count == heartbeat_count
+      heartbeat_count == HeartbeatTracker.count(tracker)
     end
   end
 
