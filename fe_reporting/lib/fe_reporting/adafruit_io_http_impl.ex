@@ -19,7 +19,18 @@ defmodule FEReporting.AdafruitIOHTTPImpl do
   end
 
   @spec build_adafruit_config(Config.t()) :: AdafruitIOHTTPClient.Config.t()
-  defp build_adafruit_config(%Config{username: username, secret_key: secret_key}) do
-    AdafruitIOHTTPClient.Config.new(username, secret_key)
+  defp build_adafruit_config(%Config{username: username, secret_key: secret_key} = config) do
+    AdafruitIOHTTPClient.Config.new(
+      username,
+      secret_key,
+      build_config_opts(config)
+    )
   end
+
+  @spec build_config_opts(Config.t()) :: [AdafruitIOHTTPClient.Config.new_opt()]
+  defp build_config_opts(%Config{base_url: base_url}) when is_binary(base_url) do
+    [base_url: base_url]
+  end
+
+  defp build_config_opts(%Config{}), do: []
 end

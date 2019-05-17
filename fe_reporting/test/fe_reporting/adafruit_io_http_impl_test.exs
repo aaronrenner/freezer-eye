@@ -31,6 +31,7 @@ defmodule FEReporting.AdafruitIOHTTPImplTest do
     [
       username: string(:alphanumeric),
       secret_key: string(:alphanumeric),
+      base_url: one_of([string(:alphanumeric), nil]),
       heartbeat_feed: string(:alphanumeric),
       heartbeat_value: integer()
     ]

@@ -5,13 +5,14 @@ defmodule FEReporting.AdafruitIOHTTPImpl.Config do
 
   @behaviour __MODULE__.Impl
 
-  defstruct [:username, :secret_key, :heartbeat_feed, :heartbeat_value]
+  defstruct [:username, :secret_key, :heartbeat_feed, :heartbeat_value, :base_url]
 
   @type t :: %__MODULE__{
           username: String.t(),
           secret_key: String.t(),
           heartbeat_feed: String.t(),
-          heartbeat_value: integer
+          heartbeat_value: integer,
+          base_url: String.t() | nil
         }
 
   @impl true

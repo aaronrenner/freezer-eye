@@ -15,7 +15,8 @@ defmodule FEReporting.AdafruitIOHTTPImpl.Config.EnvImplTest do
                   username: string(:alphanumeric),
                   secret_key: string(:alphanumeric),
                   heartbeat_feed: string(:alphanumeric),
-                  heartbeat_value: string(:alphanumeric)
+                  heartbeat_value: string(:alphanumeric),
+                  base_url: one_of([string(:alphanumeric), nil])
                 ]
                 |> fixed_list()
                 |> sublist_of() do
@@ -26,7 +27,8 @@ defmodule FEReporting.AdafruitIOHTTPImpl.Config.EnvImplTest do
                  username: Keyword.fetch!(config, :username),
                  secret_key: Keyword.fetch!(config, :secret_key),
                  heartbeat_feed: Keyword.fetch!(config, :heartbeat_feed),
-                 heartbeat_value: Keyword.fetch!(config, :heartbeat_value)
+                 heartbeat_value: Keyword.fetch!(config, :heartbeat_value),
+                 base_url: Keyword.get(config, :base_url)
                } == EnvImpl.fetch!()
       else
         assert_raise KeyError, fn ->
