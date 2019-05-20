@@ -23,6 +23,8 @@ defmodule FreezerEye.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:fe_reporting, path: "../fe_reporting"},
+      {:fe_test_helpers, path: "../fe_test_helpers", only: [:test]},
       {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false}
     ]
   end
