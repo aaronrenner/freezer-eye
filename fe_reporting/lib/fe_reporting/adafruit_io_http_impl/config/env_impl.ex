@@ -3,6 +3,9 @@ defmodule FEReporting.AdafruitIOHTTPImpl.Config.EnvImpl do
 
   alias FEReporting.AdafruitIOHTTPImpl.Config
 
+  @behaviour FEReporting.AdafruitIOHTTPImpl.Config.Impl
+
+  @impl true
   @spec fetch!() :: Config.t() | none
   def fetch! do
     env = Application.fetch_env!(:fe_reporting, :adafruit_io)
