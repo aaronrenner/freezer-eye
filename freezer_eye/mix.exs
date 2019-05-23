@@ -25,7 +25,8 @@ defmodule FreezerEye.MixProject do
     [
       {:fe_reporting, path: "../fe_reporting"},
       {:fe_test_helpers, path: "../fe_test_helpers", only: [:test]},
-      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false},
+      {:stream_data, "~> 0.4", only: [:test]}
     ]
   end
 

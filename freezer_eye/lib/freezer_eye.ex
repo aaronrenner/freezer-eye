@@ -3,7 +3,7 @@ defmodule FreezerEye do
   Primary API for FreezerEye app
   """
 
-  alias FreezerEye.DefaultImpl
+  import FreezerEye.Impl, only: [current_impl: 0]
 
   @behaviour FreezerEye.Impl
 
@@ -20,7 +20,7 @@ defmodule FreezerEye do
   @impl true
   @spec enable_heartbeat :: :ok
   def enable_heartbeat do
-    impl().enable_heartbeat()
+    current_impl().enable_heartbeat()
   end
 
   @doc """
@@ -29,10 +29,6 @@ defmodule FreezerEye do
   @impl true
   @spec disable_heartbeat :: :ok
   def disable_heartbeat do
-    impl().disable_heartbeat()
-  end
-
-  defp impl do
-    Application.get_env(:freezer_eye, :impl, DefaultImpl)
+    current_impl().disable_heartbeat()
   end
 end

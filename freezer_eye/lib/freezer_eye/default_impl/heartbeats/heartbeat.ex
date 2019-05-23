@@ -1,53 +1,46 @@
 defmodule FreezerEye.DefaultImpl.Heartbeats.Heartbeat do
   @moduledoc false
-  use GenServer
+  use Supervisor
+
+  alias __MODULE__.Server
 
   @type start_link_opt ::
           {:interval, timeout()}
           | {:heartbeat_fn, (() -> term)}
-          | GenServer.option()
+          | Supervisor.option()
 
-  @spec start_link([start_link_opt]) :: GenServer.on_start()
+  @spec start_link([start_link_opt]) :: Supervisor.on_start()
   def start_link(opts) do
     {start_opts, init_opts} = Keyword.split(opts, [:name])
-    GenServer.start_link(__MODULE__, init_opts, start_opts)
-  end
 
-  @spec stop(GenServer.server()) :: :ok
-  def stop(pid) do
-    GenServer.stop(pid)
-  end
-
-  @impl true
-  def init(init_opts) do
     with {:ok, interval} <- fetch_required_opt(init_opts, :interval),
          {:ok, heartbeat_fn} <- fetch_required_opt(init_opts, :heartbeat_fn) do
-      {:ok, %{interval: interval, heartbeat_fn: heartbeat_fn}, {:continue, :start}}
+      Supervisor.start_link(
+        __MODULE__,
+        %{interval: interval, heartbeat_fn: heartbeat_fn},
+        start_opts
+      )
     else
       {:error, error} ->
-        {:stop, error}
+        {:error, error}
     end
   end
 
-  @impl true
-  def handle_continue(:start, %{interval: interval, heartbeat_fn: heartbeat_fn} = state) do
-    Task.start(heartbeat_fn)
-    Process.send_after(self(), :send_heartbeat, interval)
-
-    {:noreply, state}
+  @spec stop(Supervisor.supervisor()) :: :ok
+  def stop(pid) do
+    Supervisor.stop(pid)
   end
 
   @impl true
-  def handle_info(:send_heartbeat, %{interval: interval, heartbeat_fn: heartbeat_fn} = state) do
-    Task.start(heartbeat_fn)
-    Process.send_after(self(), :send_heartbeat, interval)
+  def init(%{interval: interval, heartbeat_fn: heartbeat_fn}) do
+    children = [
+      {Server, [supervisor: self(), interval: interval, heartbeat_fn: heartbeat_fn]}
+    ]
 
-    {:noreply, state}
+    Supervisor.init(children, strategy: :one_for_all)
   end
 
-  def handle_info(_msg, state), do: {:noreply, state}
-
-  @spec fetch_required_opt([start_link_opt], atom) :: {:ok, term} | ArgumentError.t()
+  @spec fetch_required_opt([start_link_opt], atom) :: {:ok, term} | {:error, term}
   defp fetch_required_opt(opts, key) do
     case Keyword.fetch(opts, key) do
       {:ok, value} ->

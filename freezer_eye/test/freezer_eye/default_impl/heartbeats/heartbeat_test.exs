@@ -18,6 +18,19 @@ defmodule FreezerEye.DefaultImpl.Heartbeats.HeartbeatTest do
     end
   end
 
+  test "start_link/1 allows for name registration" do
+    name = __MODULE__.TestNameRegistration
+
+    {:ok, pid} =
+      Heartbeat.start_link(
+        name: name,
+        interval: 5000,
+        heartbeat_fn: fn -> :ok end
+      )
+
+    assert ^pid = Process.whereis(name)
+  end
+
   test "start_link/1 calls the given function every interval" do
     {:ok, tracker} = HeartbeatTracker.start_link([])
     interval = 200
@@ -35,7 +48,7 @@ defmodule FreezerEye.DefaultImpl.Heartbeats.HeartbeatTest do
     assert 5 = HeartbeatTracker.count(tracker)
 
     for actual_interval <- HeartbeatTracker.list_heartbeat_intervals(tracker, :millisecond) do
-      assert_in_delta(actual_interval, interval, 20)
+      assert_in_delta(actual_interval, interval, 50)
     end
   end
 
@@ -68,7 +81,7 @@ defmodule FreezerEye.DefaultImpl.Heartbeats.HeartbeatTest do
     actual_intervals = HeartbeatTracker.list_heartbeat_intervals(tracker, :millisecond)
 
     for {expected, actual} <- Enum.zip([expected_intervals, actual_intervals]) do
-      assert_in_delta(expected, actual, 20)
+      assert_in_delta(expected, actual, 50)
     end
   end
 

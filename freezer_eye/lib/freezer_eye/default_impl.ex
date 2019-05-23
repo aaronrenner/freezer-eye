@@ -18,4 +18,7 @@ defmodule FreezerEye.DefaultImpl do
     Heartbeats.stop_default()
     :ok
   end
+
+  @doc false
+  defdelegate child_spec(arg), to: __MODULE__.Supervisor
 end
