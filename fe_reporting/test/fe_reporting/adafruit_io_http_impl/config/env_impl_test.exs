@@ -1,5 +1,5 @@
 defmodule FEReporting.AdafruitIOHTTPImpl.Config.EnvImplTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
   use ExUnitProperties
 
   alias FEReporting.AdafruitIOHTTPImpl.Config
