@@ -5,10 +5,11 @@ defmodule FreezerEye.Config do
 
   @behaviour __MODULE__.Impl
 
-  defstruct [:heartbeat_interval]
+  defstruct [:heartbeat_interval, :enable_heartbeat_on_startup?]
 
   @type t :: %__MODULE__{
-          heartbeat_interval: pos_integer()
+          heartbeat_interval: pos_integer(),
+          enable_heartbeat_on_startup?: boolean
         }
 
   @impl true

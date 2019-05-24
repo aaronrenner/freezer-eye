@@ -8,7 +8,8 @@ defmodule IntegrationTesterTest do
   @moduletag :capture_log
 
   setup [
-    :configure_heartbeat_tracker
+    :configure_heartbeat_tracker,
+    :ensure_freezer_eye_is_started_on_exit
   ]
 
   @tag :bypass
@@ -108,6 +109,30 @@ defmodule IntegrationTesterTest do
     assert :ok = FreezerEye.disable_heartbeat()
   end
 
+  @tag :bypass
+  @tag :heartbeat_tracker
+  test "allows heartbeat to be enabled on startup", %{
+    bypass: bypass,
+    heartbeat_tracker: tracker
+  } do
+    Application.stop(:freezer_eye)
+
+    interval = 200
+
+    configure_application(
+      heartbeat_interval: interval,
+      base_url: bypass_url(bypass),
+      enable_heartbeat_on_startup: true
+    )
+
+    Application.ensure_all_started(:freezer_eye)
+
+    Process.sleep(interval * 5)
+
+    count_when_finished = HeartbeatTracker.count(tracker)
+    assert_in_delta 5, count_when_finished, 1
+  end
+
   defp configure_heartbeat_tracker(%{bypass: %Bypass{} = bypass, heartbeat_tracker: true}) do
     {:ok, heartbeat_tracker} = HeartbeatTracker.start_link([])
     username = "foo"
@@ -127,12 +152,19 @@ defmodule IntegrationTesterTest do
 
   defp configure_heartbeat_tracker(_), do: :ok
 
+  defp ensure_freezer_eye_is_started_on_exit(_) do
+    on_exit(fn ->
+      Application.ensure_all_started(:freezer_eye)
+    end)
+  end
+
   defp bypass_url(%Bypass{port: port}) do
     "http://localhost:#{port}"
   end
 
   defp configure_application(opts) when is_list(opts) do
     interval = Keyword.get(opts, :heartbeat_interval, 200)
+    enable_heartbeat_on_startup = Keyword.get(opts, :enable_heartbeat_on_startup, false)
     base_url = Keyword.fetch!(opts, :base_url)
 
     Application.put_env(:fe_reporting, :adafruit_io,
@@ -144,6 +176,7 @@ defmodule IntegrationTesterTest do
     )
 
     Application.put_env(:freezer_eye, :heartbeat_interval, interval)
+    Application.put_env(:freezer_eye, :enable_heartbeat_on_startup, enable_heartbeat_on_startup)
   end
 
   defp assert_heartbeat_intervals(tracker, interval) do

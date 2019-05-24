@@ -11,7 +11,8 @@ defmodule FreezerEye.Config.EnvImplTest do
 
   property "fetch!/0 returns a config struct with the proper values" do
     config_value_generators = [
-      heartbeat_interval: positive_integer()
+      heartbeat_interval: positive_integer(),
+      enable_heartbeat_on_startup: boolean()
     ]
 
     check all config <-
@@ -28,7 +29,9 @@ defmodule FreezerEye.Config.EnvImplTest do
 
       if has_required_keys?(config, [:heartbeat_interval]) do
         assert %Config{
-                 heartbeat_interval: Keyword.fetch!(config, :heartbeat_interval)
+                 heartbeat_interval: Keyword.fetch!(config, :heartbeat_interval),
+                 enable_heartbeat_on_startup?:
+                   Keyword.get(config, :enable_heartbeat_on_startup, true)
                } == EnvImpl.fetch!()
       else
         assert_raise ArgumentError, fn ->
