@@ -12,6 +12,8 @@ of the umbrella app's `app/<app_name>` folder structure.
 
 The project is made up of the following libraries:
 
+* [`freezer_eye_fw`](freezer_eye_fw): Nerves firmware that runs the freezer_eye
+  application
 * [`freezer_eye`](freezer_eye): Main application logic of freezer_eye.
 * [`fe_reporting`](fe_reporting): Internal application that manages how
   freezer_eye interacts with the chosen reporting service. The default
@@ -27,10 +29,11 @@ needed. This gets run on the CI pipeline as well.
 The dependency tree looks like this:
 
 ```
-freezer_eye
-├── fe_test_helpers (../fe_test_helpers)
-└── fe_reporting (../fe_reporting)
-    └── adafruit_io_http_client (../adafruit_io_http_client)
+freezer_eye_fw
+└── freezer_eye (../freezer_eye)
+  ├── fe_test_helpers (../fe_test_helpers)
+  └── fe_reporting (../fe_reporting)
+      └── adafruit_io_http_client (../adafruit_io_http_client)
 ```
 
 [poncho_project]: https://embedded-elixir.com/post/2017-05-19-poncho-projects/
