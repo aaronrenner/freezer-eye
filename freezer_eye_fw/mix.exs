@@ -40,6 +40,7 @@ defmodule FreezerEyeFW.MixProject do
       {:ring_logger, "~> 0.6"},
       {:toolshed, "~> 0.2"},
       {:freezer_eye, path: "../freezer_eye"},
+      {:bugsnag, "~> 1.7.0"},
 
       # Dependencies for all targets except :host
       {:nerves_runtime, "~> 0.6", targets: @all_targets},
