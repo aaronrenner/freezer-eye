@@ -15,6 +15,7 @@ defmodule AdafruitIOHTTPClient.TeslaImpl do
 
   @adapter Tesla.Adapter.Hackney
 
+  @impl true
   @spec create_datapoint(feed_key, value, [AdafruitIOHTTPClient.create_datapoint_opt()]) ::
           {:ok, Datapoint.t()} | {:error, HTTPClientError.t() | UnexpectedStatusCodeError.t()}
   def create_datapoint(feed_key, value, opts) do

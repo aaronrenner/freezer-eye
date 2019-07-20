@@ -21,6 +21,7 @@ defmodule AdafruitIOHTTPClient do
   @doc """
   Creates a new datapoint on the given feed
   """
+  @impl true
   @spec create_datapoint(feed_key, Datapoint.value(), [create_datapoint_opt]) ::
           {:ok, Datapoint.t()} | {:error, HTTPClientError.t() | UnexpectedStatusCodeError.t()}
   def create_datapoint(feed_key, value, opts \\ [])
